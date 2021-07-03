@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+			PUBLIC "-//mybatis.org//DTD Map 2.0//EN"
+			"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+			
+<sqlMap namespace="com.jp.ht.dao.StudentMapper">
+	
+	<resultMap class="com.jp.ht.vo.Student" id="studentRM">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="stuId" column="stu_id"/>
+		<result property="age" column="age"/>
+	</resultMap>
+	<select id="findAll" resultMap="studentRM">
+		SELECT * FROM student
+	</select>
+	<select id="findById" resultMap="studentRM">
+		SELECT * FROM student WHERE <![CDATA[id = #id#]]>
+	</select>
+	
+	<delete id="deleteById">
+		DELETE FROM student WHERE id = #id#
+	</delete>
+	
+	<update id="update">
+		UPDATE student SET
+		<![CDATA[id = #id#]]>,
+	 	<![CDATA[stu_id = #stuId#]]>
+	 		<isNotEmpty property = "name" prepend=","><![CDATA[name = #name#]]></isNotEmpty>
+	 		<isNotEmpty property = "age" prepend=","><![CDATA[age= #age#]]></isNotEmpty>
+	 	WHERE
+	 	<![CDATA[id = #id#]]>
+	</update>
+	
+	<insert id="add">
+		INSERT INTO student(name,stu_id,age) VALUES(#name#,#stuId#,#age#)
+	</insert>
+	  
+</sqlMap>

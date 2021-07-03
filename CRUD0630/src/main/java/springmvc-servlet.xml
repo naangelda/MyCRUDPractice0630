@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:p="http://www.springframework.org/schema/p"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xsi:schemaLocation="
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+default-autowire="byName">
+	<!-- 扫描添加注解的包范围 -->
+	<context:component-scan base-package="com.jp.ht"/>
+	<!-- 注解驱动 -->
+	<mvc:annotation-driven validator="validator"/>
+	<!-- 映射resources文件夹，**表示该文件夹下面所有文件夹包括所有子文件夹 -->
+	<mvc:resources location="/,classpath:/META-INF/web-resources" mapping="/resources/**"/>
+	<!-- springmvc处理不了的请求交给tomcat -->
+	<mvc:default-servlet-handler/>
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	<!-- UploadResolver -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000"/>
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="maxInMemorySize" value="4096"/>
+	</bean>
+<!-- 	<mvc:interceptors>   -->
+<!--     	<mvc:interceptor>   -->
+			<!-- 进行拦截：/*表示拦截所有controller -->
+<!-- 			<mvc:mapping path="/login" /> -->
+			<!-- 不进行拦截 -->
+<!-- 			<mvc:exclude-mapping path=""/> -->
+<!-- 			<bean class="com.jp.ht.interceptor.*"/>   -->
+<!-- 		</mvc:interceptor>   -->
+<!-- 	</mvc:interceptors> -->
+	
+	
+	 <!-- 根据客户端的不同的请求决定不同的view进行响应, 如 /blog/1.json /blog/1.xml -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+    	<property name="ignoreAcceptHeader" value="true"/>
+		<property name="defaultContentType" value="text/html"/>
+		
+    	<!-- 扩展名至mimeType的映射,即 /user.json => application/json -->
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+			</map>
+		</property>
+		<!-- 用于开启 /userinfo/123?format=json 的支持 -->
+		<property name="favorParameter" value="false"/>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+			    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+			        <property name="prefix" value="/pages/"/>
+			        <property name="suffix" value=".jsp"/>
+			    </bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- for application/json -->
+				<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+			</list>
+		</property>
+    </bean>
+	
+	
+<!-- 	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> -->
+<!-- 		<property name="exceptionKMappins"></property> -->
+<!-- 	</bean> -->
+	
+	
+	
+	
+</beans>
